@@ -1,8 +1,9 @@
 import { get } from 'svelte/store';
-import { token, user } from '$lib/stores/auth';
+import { token, user } from '@/auth';
 import { goto } from '$app/navigation';
+import { PUBLIC_API_URL } from '$env/static/public';
 
-const API_URL = process.env.API_URL
+const API_URL = PUBLIC_API_URL
 
 export async function apiRequest(endpoint, options = {}) {
     const currentToken = get(token);
@@ -17,7 +18,7 @@ export async function apiRequest(endpoint, options = {}) {
     }
 
     try {
-        const response = await fetch('${API_URL}${endpoint}', {
+        const response = await fetch(`${API_URL}${endpoint}`, {
             ...options,
             headers
         });
