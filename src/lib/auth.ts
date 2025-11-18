@@ -12,7 +12,10 @@ export async function verifyAuth() {
     }
 
     try {
-        const response = await fetch(`${API_URL}/auth/verify`, {
+        const url = `${API_URL}/auth/verify`;
+        console.log('Verifying auth at: ', url);
+
+        const response = await fetch(url, {
             headers: {
                 'Authorization': currentToken
             }

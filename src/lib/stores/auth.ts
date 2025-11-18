@@ -22,9 +22,9 @@ export const user = writable(getStoredUser());
 token.subscribe(value => {
     if (browser) {
         if (value) {
-            localStorage.setItem('token', value);
+            localStorage.setItem('GainLogToken', value);
         } else {
-            localStorage.removeItem('token');
+            localStorage.removeItem('GainLogToken');
         }
     }
 });
