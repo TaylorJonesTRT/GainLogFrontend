@@ -47,6 +47,12 @@
     "tw-animate-css": "latest",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.1",
-    "vite": "^7.1.10"
+    "vaul-svelte": "next",
+    "vite": "^7.1.10",
+    "vite-plugin-devtools-json": "^1.0.0"
+  },
+  "dependencies": {
+    "lucide": "^0.554.0",
+    "lucide-svelte": "^0.554.0"
   }
 }

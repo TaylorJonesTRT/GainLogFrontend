@@ -3,7 +3,7 @@ import { browser } from '$app/environment';
 
 const getStoredToken = () => {
     if (browser) {
-        return localStorage.getItem('token');
+        return localStorage.getItem('GainLogToken');
     }
     return null;
 };

@@ -1,11 +1,18 @@
 import { get } from 'svelte/store';
-import { token, user } from '@/auth';
+import { token, user } from '$lib/stores/auth';
 import { goto } from '$app/navigation';
 import { PUBLIC_API_URL } from '$env/static/public';
 
-const API_URL = PUBLIC_API_URL
+interface ApiOptions extends RequestInit {
+    headers?: Record<string, string>;
+}
 
-export async function apiRequest(endpoint, options = {}) {
+export async function apiRequest<T = any>(
+    endpoint: string,
+    method: string = 'GET',
+    body?: object | null,
+    options: ApiOptions = {}
+) {
     const currentToken = get(token);
 
     const headers = {
@@ -17,11 +24,17 @@ export async function apiRequest(endpoint, options = {}) {
         headers['Authorization'] = currentToken
     }
 
+    const fetchOptions: RequestInit = {
+        method: method.toUpperCase(),
+        headers,
+        ...options
+    }
+    if (body && method.toUpperCase() !== 'GET' && method.toUpperCase() !== 'HEAD') {
+        fetchOptions.body = JSON.stringify(body);
+    }
+
     try {
-        const response = await fetch(`${API_URL}${endpoint}`, {
-            ...options,
-            headers
-        });
+        const response = await fetch(`${PUBLIC_API_URL}/${endpoint}`, fetchOptions);
 
         if (response.status === 401) {
             const data = await response.json();

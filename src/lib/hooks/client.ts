@@ -1,4 +1,4 @@
-import { token, user } from '$lib/stores/auth';
+import { token, user } from '@/auth';
 import { get } from 'svelte/store';
 
 export async function handleError({ error, event }) {
