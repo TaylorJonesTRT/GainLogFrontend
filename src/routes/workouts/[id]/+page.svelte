@@ -20,7 +20,6 @@
 	let isCompletingWorkout = $state(false);
 
 	// let interval: ReturnType<typeof setInterval>;
-	//
 
 	let existingExerciseIds = $derived(
 		workout?.workout_sets ? [...new Set(workout.workout_sets.map((s: any) => s.exercise_id))] : []
@@ -102,10 +101,9 @@
 			savingStatus = 'saved';
 			isEditingTitle = false;
 
-			// Hide toast after 2 seconds
 			savingTimeout = setTimeout(() => {
 				savingStatus = null;
-			}, 2000);
+			}, 3000);
 		}
 	}
 
@@ -279,9 +277,13 @@
 	let isCompleted = $derived(workout?.completed_at !== undefined);
 </script>
 
+<svelte:head>
+	<title>{workout?.title} - GainLog</title>
+</svelte:head>
+
 {#if loading}
 	<div
-		class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100"
+		class="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 to-slate-100"
 	>
 		<div class="text-center">
 			<div
@@ -292,7 +294,7 @@
 	</div>
 {:else if errorMessage}
 	<div
-		class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100"
+		class="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 to-slate-100"
 	>
 		<div class="text-center">
 			<p class="text-lg text-red-600">{errorMessage}</p>
