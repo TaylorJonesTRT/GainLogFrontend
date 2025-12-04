@@ -15,7 +15,6 @@
 	const publicPaths = ['/login', '/signup'];
 
 	$effect(() => {
-		console.log('Effect fired, path:', $page.url.pathname);
 		if (browser && !publicPaths.includes($page.url.pathname) && !$token) {
 			goto('/login');
 		}
@@ -62,7 +61,7 @@
 			{#each visibleNavItems as item}
 				<Button
 					variant="ghost"
-					class="flex h-auto flex-1 flex-col items-center gap-1 rounded-none px-6 py-4 {activeTab ===
+					class="flex h-auto flex-1 cursor-pointer flex-col items-center gap-1 rounded-none px-6 py-4 {activeTab ===
 					item.id
 						? 'text-primary'
 						: 'text-muted-foreground'}"
