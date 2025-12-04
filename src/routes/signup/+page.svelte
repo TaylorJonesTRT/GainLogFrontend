@@ -9,34 +9,43 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import { token, user } from '$lib/stores/auth';
 
-	// Form state
 	let email = $state('');
 	let password = $state('');
+	let passwordConfirmation = $state('');
 	let error = $state('');
 	let loading = $state(false);
 
-	$effect(() => {
-		if ($page.url.searchParams.get('expired') === 'true') {
-			error = 'Your session has expired. Please login again.';
-		}
-	});
-
-	async function handleLogin(e: Event) {
+	async function handleSignup(e: Event) {
 		e.preventDefault();
 		error = '';
+
+		// Validation
+		if (password !== passwordConfirmation) {
+			error = 'Passwords do not match';
+			return;
+		}
+
+		if (password.length < 6) {
+			error = 'Password must be at least 6 characters';
+			return;
+		}
+
 		loading = true;
 
 		try {
-			const response = await fetch('http://localhost:3000/login', {
+			const response = await fetch('http://localhost:3000/signup', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					user: { email, password }
+					user: {
+						email,
+						password,
+						password_confirmation: passwordConfirmation
+					}
 				})
 			});
 
@@ -49,15 +58,20 @@
 					user.set(data.user);
 					goto('/');
 				} else {
-					error = 'Login failed: No token received';
+					error = 'Signup failed: No token received';
 				}
 			} else {
 				const data = await response.json();
-				error = data.error || 'Invalid email or password';
+				// Rails typically returns errors in this format
+				if (data.errors) {
+					error = Object.values(data.errors).flat().join(', ');
+				} else {
+					error = data.error || 'Signup failed';
+				}
 			}
 		} catch (err) {
-			console.error('Login error:', err);
-			error = 'Login failed. Please try again.';
+			console.error('Signup error:', err);
+			error = 'Signup failed. Please try again.';
 		} finally {
 			loading = false;
 		}
@@ -66,8 +80,8 @@
 
 <div class="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
 	<div class="w-full max-w-sm md:max-w-3xl">
-		<AuthLayout title="Welcome back" description="Login to your GainLog account">
-			<form onsubmit={handleLogin}>
+		<AuthLayout title="Create an account" description="Start tracking your gains with GainLog">
+			<form onsubmit={handleSignup}>
 				<FieldGroup>
 					{#if error}
 						<div class="rounded-lg bg-red-50 p-3 text-sm text-red-600">
@@ -75,22 +89,35 @@
 						</div>
 					{/if}
 
+					<!-- Optional: Name field -->
+					<!-- <Field>
+				<FieldLabel for="name">Name</FieldLabel>
+				<Input id="name" type="text" bind:value={name} disabled={loading} />
+			</Field> -->
+
 					<Field>
 						<FieldLabel for="email">Email</FieldLabel>
 						<Input id="email" type="email" bind:value={email} disabled={loading} required />
 					</Field>
 
 					<Field>
-						<div class="flex items-center">
-							<FieldLabel for="password">Password</FieldLabel>
-							<a href="/forgot-password" class="ml-auto text-sm underline-offset-2 hover:underline">
-								Forgot your password?
-							</a>
-						</div>
+						<FieldLabel for="password">Password</FieldLabel>
 						<Input
 							id="password"
 							type="password"
 							bind:value={password}
+							disabled={loading}
+							required
+							placeholder="At least 6 characters"
+						/>
+					</Field>
+
+					<Field>
+						<FieldLabel for="password-confirmation">Confirm Password</FieldLabel>
+						<Input
+							id="password-confirmation"
+							type="password"
+							bind:value={passwordConfirmation}
 							disabled={loading}
 							required
 						/>
@@ -98,13 +125,12 @@
 
 					<Field>
 						<Button type="submit" class="w-full" disabled={loading}>
-							{loading ? 'Logging in...' : 'Login'}
+							{loading ? 'Creating account...' : 'Create account'}
 						</Button>
 					</Field>
 
 					<FieldDescription class="text-center">
-						Don't have an account? <a href="/signup" class="font-semibold hover:underline"
-							>Sign up</a
+						Already have an account? <a href="/login" class="font-semibold hover:underline">Login</a
 						>
 					</FieldDescription>
 				</FieldGroup>
