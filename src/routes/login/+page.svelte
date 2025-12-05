@@ -11,6 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { token, user } from '$lib/stores/auth';
+	import { apiRequest } from '@/api';
 
 	// Form state
 	let email = $state('');
@@ -30,15 +31,13 @@
 		loading = true;
 
 		try {
-			const response = await fetch('http://localhost:3000/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					user: { email, password }
-				})
-			});
+			const loginBody = {
+				user: {
+					email,
+					password
+				}
+			};
+			const response = await apiRequest('login', 'POST', loginBody);
 
 			if (response.ok) {
 				const data = await response.json();

@@ -10,6 +10,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { token, user } from '$lib/stores/auth';
+	import { apiRequest } from '@/api';
 
 	let email = $state('');
 	let password = $state('');
@@ -35,19 +36,15 @@
 		loading = true;
 
 		try {
-			const response = await fetch('http://localhost:3000/signup', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					user: {
-						email,
-						password,
-						password_confirmation: passwordConfirmation
-					}
-				})
-			});
+			const body = {
+				user: {
+					email,
+					password,
+					password_confirmation: passwordConfirmation
+				}
+			};
+
+			const response = await apiRequest('signup', 'POST', body);
 
 			if (response.ok) {
 				const data = await response.json();
@@ -62,7 +59,6 @@
 				}
 			} else {
 				const data = await response.json();
-				// Rails typically returns errors in this format
 				if (data.errors) {
 					error = Object.values(data.errors).flat().join(', ');
 				} else {
