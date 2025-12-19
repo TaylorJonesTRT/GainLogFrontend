@@ -1,8 +1,9 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { PUBLIC_API_URL } from '$env/static/public';
 
 export const fallback: RequestHandler = async ({ request, params, fetch }) => {
-    const BACKEND_URL = 'http://gainlog-backend:3000';
+    const BACKEND_URL = PUBLIC_API_URL;
 
     const url = new URL(request.url);
     const destination = `${BACKEND_URL}/${params.path}${url.search}`;
