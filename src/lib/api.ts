@@ -1,7 +1,6 @@
 import { get } from 'svelte/store';
 import { token, user } from '$lib/stores/auth';
 import { goto } from '$app/navigation';
-import { PUBLIC_API_URL } from '$env/static/public';
 
 interface ApiOptions extends RequestInit {
     headers?: Record<string, string>;
@@ -34,7 +33,7 @@ export async function apiRequest<T = any>(
     }
 
     try {
-        const response = await fetch(`${PUBLIC_API_URL}/${endpoint}`, fetchOptions);
+        const response = await fetch(`/api/${endpoint}`, fetchOptions);
 
         if (response.status === 401) {
             const data = await response.json();
@@ -43,13 +42,13 @@ export async function apiRequest<T = any>(
                 console.log('Token expired, logging out...');
                 token.set(null);
                 user.set(null);
-                goto('/login?expired=true');
+                goto('/auth/login?expired=true');
                 throw new Error('Session expired. Please login again.');
             }
 
             token.set(null);
             user.set(null);
-            goto('/login');
+            goto('/auth/login');
             throw new Error('Authentication failed. Please login again.');
         }
 
