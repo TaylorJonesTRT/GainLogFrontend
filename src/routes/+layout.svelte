@@ -12,11 +12,11 @@
 
 	let { children } = $props();
 
-	const publicPaths = ['/login', '/signup'];
+	const publicPaths = ['/auth/login', '/auth/signup', '/auth/forgot-password', '/auth/password-reset'];
 
 	$effect(() => {
 		if (browser && !publicPaths.includes($page.url.pathname) && !$token) {
-			goto('/login');
+			goto('/auth/login');
 		}
 	});
 
@@ -24,7 +24,7 @@
 		if (!publicPaths.includes($page.url.pathname)) {
 			const isAuthenticated = await verifyAuth();
 			if (!isAuthenticated) {
-				goto('/login?expired=true');
+				goto('/auth/login?expired=true');
 			}
 		}
 	});
