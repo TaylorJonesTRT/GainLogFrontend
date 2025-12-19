@@ -1,15 +1,12 @@
 import { token, user } from '$lib/stores/auth';
 import { get } from 'svelte/store';
 import { goto } from '$app/navigation';
-import { PUBLIC_API_URL } from '$env/static/public';
-
-const API_URL = PUBLIC_API_URL;
 
 const currentToken = get(token);
 
 export async function handleLogout() {
     try {
-        const url = `${API_URL}/logout`;
+        const url = `/api/logout`;
         const response = await fetch(url, {
             method: 'DELETE',
             headers: {
@@ -21,7 +18,7 @@ export async function handleLogout() {
         if (response.ok) {
             token.set(null);
             user.set(null);
-            goto('/login');
+            goto('/auth/login');
         } else {
             console.error('Logout failed');
         }
@@ -37,7 +34,7 @@ export async function verifyAuth() {
     }
 
     try {
-        const url = `${API_URL}/auth/verify`;
+        const url = `/api/auth/verify`;
 
         const response = await fetch(url, {
             headers: {
