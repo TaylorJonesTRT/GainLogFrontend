@@ -28,7 +28,7 @@
 				}
 			};
 
-			const response = await apiRequest('password', 'POST', body);
+			const response = await apiRequest('reset-password', 'POST', body);
 
 			if (response.ok) {
 				success = true;
